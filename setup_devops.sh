@@ -1,5 +1,10 @@
 #!/bin/bash
 
+set -e  # Exit immediately if a command exits with a non-zero status
+set -x  # Print commands and their arguments as they are executed
+
+echo "Starting DevOps environment setup script"
+
 # Check if Ansible is installed
 if ! command -v ansible &> /dev/null
 then
@@ -7,6 +12,8 @@ then
     sudo apt update
     sudo apt install -y ansible
 fi
+
+echo "Creating temporary Ansible playbook file"
 
 # Create a temporary Ansible playbook file
 cat << EOF > /tmp/devops_setup.yml
@@ -105,8 +112,12 @@ END_PLAYBOOK
 )
 EOF
 
+echo "Running Ansible playbook"
+
 # Run the Ansible playbook
 ansible-playbook /tmp/devops_setup.yml --ask-become-pass
+
+echo "Removing temporary playbook file"
 
 # Remove the temporary playbook file
 rm /tmp/devops_setup.yml
