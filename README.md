@@ -34,11 +34,10 @@ So go ahead, clone it, break it, fix it, and most importantly, **learn something
 10. [Next Steps](#next-steps)
 
 ---
-This guide provides a step-by-step process that should be easy for beginners to follow. It covers everything from cloning the repository to verifying the installation and suggests next steps. You can add this to your README.md file or create a separate SETUP.md file in your repository for this detailed guide.
 
 ## Quick Setup Instructions
 
-This guide will walk you through setting up a DevOps environment on your Ubuntu-based system using the scripts and playbooks from this repository.
+This guide will walk you through setting up an MLOps/DevOps environment on your Ubuntu-based system using the scripts and playbooks from this repository.
 
 ### Prerequisites
 
@@ -52,13 +51,13 @@ This guide will walk you through setting up a DevOps environment on your Ubuntu-
 2. Run the following command to clone the repository:
 
    ```bash
-   git clone https://github.com/cloudikeme/MLOps_env_setup.git
+   git clone git@github.com:cloudikeme/MLOps_Env_Setup.git
    ```
 
 3. Navigate into the cloned directory:
 
    ```bash
-   cd devops-environment-setup
+   cd MLOps_Env_Setup
    ```
 
 ### Step 2: Choose Your Shell
