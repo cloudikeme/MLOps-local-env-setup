@@ -54,7 +54,7 @@ This guide will walk you through setting up a DevOps environment on your Ubuntu-
 2. Run the following command to clone the repository:
 
    ```bash
-   git clone https://github.com/yourusername/devops-environment-setup.git
+   git clone https://github.com/cloudikeme/MLOps_env_setup.git
    ```
 
 3. Navigate into the cloned directory:
