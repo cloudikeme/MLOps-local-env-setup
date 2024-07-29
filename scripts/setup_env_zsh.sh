@@ -16,7 +16,7 @@ fi
 echo "Creating temporary Ansible playbook file"
 
 # Create a temporary Ansible playbook file
-cat << EOF > /tmp/devops_setup.yml
+cat << EOF > /tmp/setup_env_zsh.yml
 $(cat << 'END_PLAYBOOK'
 ---
 - name: Set up DevOps environment
@@ -279,12 +279,12 @@ echo "Running Ansible playbook"
 touch /tmp/.zshrc
 
 # Run the Ansible playbook
-ansible-playbook /tmp/devops_setup.yml --ask-become-pass
+ansible-playbook /tmp/setup_env_zsh.yml --ask-become-pass
 
 echo "Removing temporary playbook file"
 
 # Remove the temporary playbook file
-rm /tmp/devops_setup.yml
+rm /tmp/setup_env_zsh.yml
 
 echo "DevOps environment setup complete!"
 echo "Please log out and log back in for the Go environment variables to take effect."
