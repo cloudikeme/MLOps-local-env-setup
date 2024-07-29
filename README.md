@@ -1,6 +1,6 @@
 # My Local Quick MLOps Environment Setup
 
-### 🔨 Break Stuff, Learn Faster: Your Personal DevOps Playground Awaits!
+### 🔨 Break Stuff, Learn Faster: Your Personal MLOps Playground Awaits!
 
 You know what they say - the best way to learn is to break things!  
 
@@ -17,6 +17,65 @@ So this is not just some generic setup script – **it's the exact one I use mys
 **Whether you're a complete beginner or a seasoned pro looking for a quick and painless setup, this repo's got you covered.**  
 
 So go ahead, clone it, break it, fix it, and most importantly, **learn something new along the way!**  And hey, if you find any bugs (or just want to say hi), feel free to open an issue. Let's conquer the world of MLOps together, one command at a time. 💪
+
+# How to Set Up Your DevOps Environment
+
+## Table of Contents
+
+1. [Prerequisites](#prerequisites)
+2. [Step 1: Clone the Repository](#step-1-clone-the-repository)
+3. [Step 2: Choose Your Shell](#step-2-choose-your-shell)
+4. [Step 3: Run the Setup Script](#step-3-run-the-setup-script)
+    - [For Bash Users](#for-bash-users)
+    - [For Zsh Users](#for-zsh-users)
+5. [Step 4: Wait for Installation](#step-4-wait-for-installation)
+6. [Step 5: Restart Your Shell](#step-5-restart-your-shell)
+7. [Step 6: Verify Installation](#step-6-verify-installation)
+8. [Step 7: Configure GitHub CLI (Optional)](#step-7-configure-github-cli-optional)
+9. [Troubleshooting](#troubleshooting)
+10. [Next Steps](#next-steps)
+
+---
+
+## Prerequisites
+...
+
+## Step 1: Clone the Repository
+...
+
+## Step 2: Choose Your Shell
+...
+
+## Step 3: Run the Setup Script
+...
+
+### For Bash Users
+...
+
+### For Zsh Users
+...
+
+## Step 4: Wait for Installation
+...
+
+## Step 5: Restart Your Shell
+...
+
+## Step 6: Verify Installation
+...
+
+## Step 7: Configure GitHub CLI (Optional)
+...
+
+## Troubleshooting
+...
+
+## Next Steps
+...
+
+---
+
+This guide provides a step-by-step process that should be easy for beginners to follow. It covers everything from cloning the repository to verifying the installation and suggests next steps. You can add this to your README.md file or create a separate SETUP.md file in your repository for this detailed guide.
 
 ## Quick Setup Instructions
 
@@ -81,14 +140,14 @@ Decide whether you want to set up your environment for Bash (default shell) or Z
 
 The script will now run and install various tools and configurations. This process may take some time, depending on your internet speed. You might be prompted for your password or to confirm certain actions.
 
-## Step 5: Restart Your Shell
+### Step 5: Restart Your Shell
 
 After the script completes:
 
 1. Close your current terminal.
 2. Open a new terminal to ensure all changes take effect.
 
-## Step 6: Verify Installation
+### Step 6: Verify Installation
 
 To check if the setup was successful, try running some of these commands:
 
@@ -99,7 +158,7 @@ To check if the setup was successful, try running some of these commands:
 
 If these commands return version information, your setup was successful!
 
-## Step 7: Configure GitHub CLI (Optional)
+### Step 7: Configure GitHub CLI (Optional)
 
 If you plan to use GitHub CLI:
 
@@ -111,16 +170,16 @@ If you plan to use GitHub CLI:
 
 2. Follow the prompts to authenticate with your GitHub account.
 
-## Troubleshooting
+### Troubleshooting
 
 If you encounter any issues:
 
-1. Check the terminal output for error messages.
+1. Check your network connection and also check the terminal output for error messages.
 2. Ensure your system meets the prerequisites.
 3. Try running the script again.
 4. If problems persist, open an issue in this repository with details about the error.
 
-## Next Steps
+### Next Steps
 
 Now that your DevOps environment is set up, you're ready to start working on projects! Consider exploring:
 
