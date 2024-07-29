@@ -1,22 +1,39 @@
+#!/bin/bash
+
+set -e  # Exit immediately if a command exits with a non-zero status
+set -x  # Print commands and their arguments as they are executed
+
+echo "Starting DevOps environment setup script"
+
+# Check if Ansible is installed
+if ! command -v ansible &> /dev/null
+then
+    echo "Ansible is not installed. Installing Ansible..."
+    sudo apt update
+    sudo apt install -y ansible
+fi
+
+echo "Creating temporary Ansible playbook file"
+
+# Create a temporary Ansible playbook file
+cat << EOF > /tmp/local_setup.yml
+$(cat << 'END_PLAYBOOK'
 ---
 - name: Set up DevOps environment
   hosts: localhost
   become: yes
 
-vars:
-    username: "{{ ansible_user_id }}"
+  vars:
+    username: "cloudikeme"
     user_uid: "{{ ansible_user_uid }}"
     user_gid: "{{ ansible_user_gid }}"
-    git_email: "your.email@example.com"
-    git_name: "Your Name"
+    git_email: "cloudikeme@gmail.com"
+    git_name: "cloudikeme"
     miniconda_version: "latest"
-    go_version: "1.17.13"
-    docker_slim_version: "1.40.2"
-    kind_version: "v0.20.0"
-    kubectl_version: "v1.26.0"
-    helm_version: "v3.11.1"
-    stern_version: "1.22.0"
-    argocd_version: "2.10.1"
+    go_version: "1.22.5"
+    kind_version: "v0.23.0"
+    kubectl_version: "v1.30.0"
+    
 
   tasks:
     - name: Update apt cache
@@ -67,12 +84,6 @@ vars:
         create: yes
         mode: 0440
 
-    - name: Install Oh My Zsh
-      become_user: "{{ username }}"
-      shell: sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
-      args:
-        creates: "/home/{{ username }}/.oh-my-zsh"
-
     - name: Configure Git
       become_user: "{{ username }}"
       git_config:
@@ -84,15 +95,36 @@ vars:
         - { name: 'user.name', value: '{{ git_name }}' }
         - { name: 'core.autocrlf', value: 'false' }
 
-    - name: Copy .zshrc file
-      copy:
-        src: .zshrc
-        dest: "/home/{{ username }}/.zshrc"
-        owner: "{{ username }}"
-        group: "{{ username }}"
+    - name: Install GitHub CLI
+      block:
+        - name: Download GitHub CLI GPG key
+          get_url:
+            url: https://cli.github.com/packages/githubcli-archive-keyring.gpg
+            dest: /usr/share/keyrings/githubcli-archive-keyring.gpg
+            mode: '0644'
 
-    - name: Convert .zshrc to Unix format
-      command: dos2unix "/home/{{ username }}/.zshrc"
+        - name: Add GitHub CLI repository
+          apt_repository:
+            repo: "deb [arch={{ ansible_architecture }} signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main"
+            state: present
+            filename: github-cli
+
+        - name: Install GitHub CLI
+          apt:
+            name: gh
+            state: latest
+            update_cache: yes
+            
+
+    - name: Configure bash
+      become_user: "{{ username }}"
+      blockinfile:
+        path: "/home/{{ username }}/.bashrc"
+        block: |
+          source <(kubectl completion bash)
+          alias k=kubectl
+          complete -F __start_kubectl k
+          source <(kind completion bash)
 
     - name: Set Zsh as default shell
       user:
@@ -136,32 +168,16 @@ vars:
             dest: "/usr/local/bin/kind"
             mode: '0755'
 
-        - name: Add KinD completion to .zshrc
+        - name: Add KinD completion to .bashrc
           lineinfile:
-            path: "/home/{{ username }}/.zshrc"
-            line: 'source <(kind completion zsh)'
+            path: "/home/{{ username }}/.bashrc"
+            line: 'source <(kind completion bash)'
 
     - name: Install kubectl
       get_url:
         url: https://dl.k8s.io/release/v1.28.0/bin/linux/amd64/kubectl
         dest: /usr/local/bin/kubectl
         mode: '0755'
-
-    - name: Install Helm
-      unarchive:
-        src: https://get.helm.sh/helm-{{ helm_version | default('v3.11.1') }}-linux-amd64.tar.gz
-        dest: /tmp
-        remote_src: yes
-      command: mv /tmp/linux-amd64/helm /usr/local/bin/helm
-      args:
-        creates: /usr/local/bin/helm
-
-    - name: Install Stern
-      unarchive:
-        src: https://github.com/stern/stern/releases/download/v{{ stern_version | default('1.22.0') }}/stern_{{ stern_version | default('1.22.0') }}_linux_amd64.tar.gz
-        dest: /usr/local/bin
-        remote_src: yes
-        extra_opts: [--strip-components=1]
 
     - name: Install kubectx and kubens
       get_url:
@@ -171,12 +187,6 @@ vars:
       loop:
         - kubectx
         - kubens
-
-    - name: Install Argo CD CLI
-      get_url:
-        url: https://github.com/argoproj/argo-cd/releases/download/v{{ argocd_version | default('2.10.1') }}/argocd-linux-amd64
-        dest: /usr/local/bin/argocd
-        mode: '0755'
 
     - name: Install Miniconda
       become_user: "{{ username }}"
@@ -192,10 +202,10 @@ vars:
             creates: "$HOME/miniconda"
         - name: Add Miniconda to PATH
           lineinfile:
-            path: "/home/{{ username }}/.zshrc"
+            path: "/home/{{ username }}/.bashrc"
             line: 'export PATH="$HOME/miniconda/bin:$PATH"'
-        - name: Initialize conda for zsh
-          shell: "$HOME/miniconda/bin/conda init zsh"
+        - name: Initialize conda for bash
+          shell: "$HOME/miniconda/bin/conda init"
 
     - name: Install Go
       block:
@@ -210,7 +220,7 @@ vars:
             remote_src: yes
         - name: Add Go to PATH
           lineinfile:
-            path: "/home/{{ username }}/.zshrc"
+            path: "/home/{{ username }}/.bashrc"
             line: 'export PATH=$PATH:/usr/local/go/bin'
         - name: Create Go workspace directories
           file:
@@ -224,74 +234,35 @@ vars:
             - bin
         - name: Set GOPATH
           lineinfile:
-            path: "/home/{{ username }}/.zshrc"
+            path: "/home/{{ username }}/.bashrc"
             line: 'export GOPATH=$HOME/go'
-
-    - name: Install docker-slim
-      block:
-        - name: Download docker-slim
-          get_url:
-            url: "https://downloads.dockerslim.com/releases/{{ docker_slim_version }}/dist_linux.tar.gz"
-            dest: "/tmp/docker-slim.tar.gz"
-        - name: Extract docker-slim
-          unarchive:
-            src: "/tmp/docker-slim.tar.gz"
-            dest: "/usr/local/bin"
-            remote_src: yes
-            extra_opts: [--strip-components=1]
-        - name: Set permissions for docker-slim binaries
-          file:
-            path: "/usr/local/bin/{{ item }}"
-            mode: '0755'
-          loop:
-            - docker-slim
-            - docker-slim-sensor
-
-    - name: Change blue shade in agnoster theme
-      become_user: "{{ username }}"
-      replace:
-        path: "/home/{{ username }}/.oh-my-zsh/themes/agnoster.zsh-theme"
-        regexp: 'blue'
-        replace: '39d'
-
     
-    - name: Add kubectl autocomplete and alias to .zshrc
+    - name: Add kubectl autocomplete and alias to .bashrc
       lineinfile:
-        path: "/home/{{ username }}/.zshrc"
+        path: "/home/{{ username }}/.bashrc"
         line: "{{ item }}"
       loop:
-        - "source <(kubectl completion zsh)"
+        - "source <(kubectl completion bash)"
         - "alias k=kubectl"
         - "complete -F __start_kubectl k"
-
-    - name: Download Go tarball
-      get_url:
-        url: https://go.dev/dl/go1.21.6.linux-amd64.tar.gz
-        dest: /tmp/go1.21.6.linux-amd64.tar.gz
-
-    - name: Extract Go tarball
-      unarchive:
-        src: /tmp/go1.21.6.linux-amd64.tar.gz
-        dest: /usr/local
-        remote_src: yes
-
-    - name: Set Go environment variables
-      lineinfile:
-        path: /etc/profile.d/go.sh
-        line: "{{ item }}"
-        create: yes
-      loop:
-        - 'export PATH=$PATH:/usr/local/go/bin'
-        - 'export GOPATH=$HOME/go'
-        - 'export PATH=$PATH:$GOPATH/bin'
-
-    - name: Add current user to docker group
-      user:
-        name: "{{ ansible_user_id }}"
-        groups: docker
-        append: yes
 
     - name: Restart Docker service
       systemd:
         name: docker
         state: restarted
+END_PLAYBOOK
+)
+EOF
+
+echo "Running Ansible playbook"
+
+# Run the Ansible playbook
+ansible-playbook /tmp/local_setup.yml --ask-become-pass
+
+echo "Removing temporary playbook file"
+
+# Remove the temporary playbook file
+rm /tmp/local_setup.yml
+
+echo "DevOps environment setup complete!"
+echo "Please log out and log back in for the Go environment variables to take effect."

@@ -114,6 +114,9 @@ EOF
 
 echo "Running Ansible playbook"
 
+# Create an empty .zshrc file (you'll need to customize this)
+touch .zshrc
+
 # Run the Ansible playbook
 ansible-playbook /tmp/devops_setup.yml --ask-become-pass
 
