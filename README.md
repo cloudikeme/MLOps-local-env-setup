@@ -36,45 +36,6 @@ So go ahead, clone it, break it, fix it, and most importantly, **learn something
 10. [Next Steps](#next-steps)
 
 ---
-
-## Prerequisites
-...
-
-## Step 1: Clone the Repository
-...
-
-## Step 2: Choose Your Shell
-...
-
-## Step 3: Run the Setup Script
-...
-
-### For Bash Users
-...
-
-### For Zsh Users
-...
-
-## Step 4: Wait for Installation
-...
-
-## Step 5: Restart Your Shell
-...
-
-## Step 6: Verify Installation
-...
-
-## Step 7: Configure GitHub CLI (Optional)
-...
-
-## Troubleshooting
-...
-
-## Next Steps
-...
-
----
-
 This guide provides a step-by-step process that should be easy for beginners to follow. It covers everything from cloning the repository to verifying the installation and suggests next steps. You can add this to your README.md file or create a separate SETUP.md file in your repository for this detailed guide.
 
 ## Quick Setup Instructions
@@ -184,6 +145,7 @@ If you encounter any issues:
 Now that your DevOps environment is set up, you're ready to start working on projects! Consider exploring:
 
 - Docker containers and Kubernetes clusters
+- MLOps Projects
 - Go programming
 - GitHub Actions for CI/CD
 - Python development with Miniconda
@@ -193,4 +155,8 @@ Happy coding!
 ---
 
 This guide provides a step-by-step process that should be easy for beginners to follow. It covers everything from cloning the repository to verifying the installation and suggests next steps. You can add this to your README.md file or create a separate SETUP.md file in your repository for this detailed guide.
+
+
+
+---
 
