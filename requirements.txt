@@ -1,0 +1,9 @@
+tensorflow==2.4.3
+absl-py==0.10.0
+termcolor==1.1.0
+wrapt==1.12.1
+tensorflow-datasets
+numpy
+scipy 
+matplotlib
+pandas
