@@ -1,6 +1,6 @@
 # My Local Quick MLOps Environment Setup
 
-### 🔨 Break Stuff, Learn Faster: Your Personal MLOps Playground Awaits!
+## 🔨 Break Stuff, Learn Faster: Your Personal MLOps Playground Awaits
 
 You know what they say - the best way to learn is to break things!  
 
@@ -11,14 +11,12 @@ So this is not just some generic setup script – **it's the exact one I use mys
 **Think of it as your own personal MLOps playground:**
 
 - **One-click install:**  Get Conda, Docker, Kubernetes, Go, and other essential tools up and running with a single command. No more copy-pasting from outdated tutorials!
-- **Always fresh, always ready:** I'm constantly tweaking and updating this repo to make sure it's using the latest and greatest versions. Consider it your shortcut to staying ahead of the curve. 
+- **Always fresh, always ready:** I'm constantly tweaking and updating this repo to make sure it's using the latest and greatest versions. Consider it your shortcut to staying ahead of the curve.
 - **Bash or Zsh, take your pick:**  We all have our preferences – choose the shell that speaks to your soul and let's get this party started.
 
 **Whether you're a complete beginner or a seasoned pro looking for a quick and painless setup, this repo's got you covered.**  
 
 So go ahead, clone it, break it, fix it, and most importantly, **learn something new along the way!**  And hey, if you find any bugs (or just want to say hi), feel free to open an issue. Let's conquer the world of MLOps together, one command at a time. 💪
-
-# How to Set Up Your DevOps Environment
 
 ## Table of Contents
 
@@ -69,7 +67,7 @@ Decide whether you want to set up your environment for Bash (default shell) or Z
 
 ### Step 3: Run the Setup Script
 
-#### For Bash Users:
+#### For Bash Users
 
 1. Make the Bash setup script executable:
 
@@ -83,7 +81,7 @@ Decide whether you want to set up your environment for Bash (default shell) or Z
    sudo ./scripts/setup_env_bash.sh
    ```
 
-#### For Zsh Users:
+#### For Zsh Users
 
 1. Make the Zsh setup script executable:
 
@@ -153,10 +151,3 @@ Now that your DevOps environment is set up, you're ready to start working on pro
 Happy coding!
 
 ---
-
-This guide provides a step-by-step process that should be easy for beginners to follow. It covers everything from cloning the repository to verifying the installation and suggests next steps. You can add this to your README.md file or create a separate SETUP.md file in your repository for this detailed guide.
-
-
-
----
-
