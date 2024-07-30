@@ -122,10 +122,10 @@ $(cat << 'END_PLAYBOOK'
         path: "/home/{{ username }}/.bashrc"
         block: |
           source <(kubectl completion bash)
-          alias k="sudo kubectl"
-          alias a="git add ."
-          alias s='git commit -m "update"'
-          alias d="git push -u origin main"
+          k="sudo kubectl"
+          a="git add ."
+          s='git commit -m "update"'
+          d="git push -u origin main"
           complete -F __start_kubectl k
           source <(kind completion bash)
 
