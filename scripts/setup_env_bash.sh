@@ -247,9 +247,6 @@ $(cat << 'END_PLAYBOOK'
       loop:
         - "source <(kubectl completion bash)"
         - alias k="sudo kubectl"
-        -  alias a="git add ."
-        -  alias s='git commit -m "update"'
-        -  alias d="git push -u origin main"
         - "complete -F __start_kubectl k"
 
     - name: Restart Docker service
