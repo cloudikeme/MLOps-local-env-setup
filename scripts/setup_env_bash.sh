@@ -27,8 +27,8 @@ $(cat << 'END_PLAYBOOK'
     username: "cloudikeme"
     user_uid: "{{ ansible_user_uid }}"
     user_gid: "{{ ansible_user_gid }}"
-    git_email: "youremail@example.com"
-    git_name: "yourusername"
+    git_email: "cloudikeme@gmail.com"
+    git_name: "cloudikeme"
     miniconda_version: "latest"
     go_version: "1.22.5"
     kind_version: "v0.23.0"
@@ -122,7 +122,10 @@ $(cat << 'END_PLAYBOOK'
         path: "/home/{{ username }}/.bashrc"
         block: |
           source <(kubectl completion bash)
-          alias k=kubectl
+          alias k="sudo kubectl"
+          alias a="git add ."
+          alias s='git commit -m "update"'
+          alias d="git push -u origin main"
           complete -F __start_kubectl k
           source <(kind completion bash)
 
@@ -243,7 +246,10 @@ $(cat << 'END_PLAYBOOK'
         line: "{{ item }}"
       loop:
         - "source <(kubectl completion bash)"
-        - "alias k=kubectl"
+        - alias k="sudo kubectl"
+        -  alias a="git add ."
+        -  alias s='git commit -m "update"'
+        -  alias d="git push -u origin main"
         - "complete -F __start_kubectl k"
 
     - name: Restart Docker service
