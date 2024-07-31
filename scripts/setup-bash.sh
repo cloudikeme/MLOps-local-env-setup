@@ -155,11 +155,6 @@ cat << EOF > /tmp/setup_env.yml
             dest: "/usr/local/bin/kind"
             mode: '0755'
 
-        - name: Add KinD completion to .bashrc
-          lineinfile:
-            path: "/home/{{ username }}/.bashrc"
-            line: 'source <(kind completion bash)'
-
     - name: Install kubectl
       get_url:
         url: "https://dl.k8s.io/release/{{ kubectl_version }}/bin/linux/amd64/kubectl"
@@ -206,7 +201,7 @@ cat << EOF > /tmp/setup_env.yml
         - name: Add Go to PATH
           lineinfile:
             path: "/home/{{ username }}/.bashrc"
-            line: 'export PATH=$PATH:/usr/local/go/bin'
+            line: 'export PATH="$PATH:/usr/local/go/bin"'
         - name: Create Go workspace directories
           file:
             path: "/home/{{ username }}/go/{{ item }}"
@@ -220,7 +215,7 @@ cat << EOF > /tmp/setup_env.yml
         - name: Set GOPATH
           lineinfile:
             path: "/home/{{ username }}/.bashrc"
-            line: 'export GOPATH=$HOME/go'
+            line: 'export GOPATH="$HOME/go"'
 
     - name: Configure bash
       become_user: "{{ username }}"
@@ -228,18 +223,13 @@ cat << EOF > /tmp/setup_env.yml
         path: "/home/{{ username }}/.bashrc"
         block: |
           # Ensure /usr/local/bin is in PATH
-          'export PATH=$PATH:/usr/local/bin'
+          'export PATH="$PATH:/usr/local/bin"'
 
           # Kubectl completion and alias
           if command -v kubectl &> /dev/null; then
             source <(kubectl completion bash)
             alias k="sudo kubectl"
             complete -F __start_kubectl k
-          fi
-
-          # KinD completion
-          if command -v kind &> /dev/null; then
-            source <(kind completion bash)
           fi
           
           # Git aliases
@@ -249,9 +239,9 @@ cat << EOF > /tmp/setup_env.yml
           alias k="sudo kubectl"
 
           # Go binaries
-          'export PATH=$PATH:/usr/local/go/bin'
-          'export GOPATH=$HOME/go'
-          'export PATH=$PATH:$GOPATH/bin'
+          'export PATH="$PATH:/usr/local/go/bin"'
+          'export GOPATH="$HOME/go"'
+          'export PATH="$PATH:$GOPATH/bin"'
 
     - name: Ensure .bashrc has correct permissions
       file:
