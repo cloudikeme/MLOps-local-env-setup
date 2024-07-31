@@ -16,7 +16,7 @@ fi
 echo "Creating temporary Ansible playbook file"
 
 # Create a temporary Ansible playbook file
-cat << EOF > /tmp/setup_env_bash.yml
+cat << EOF > /tmp/setup_env.yml
 ---
 - name: Set up DevOps environment
   hosts: localhost
@@ -227,11 +227,13 @@ cat << EOF > /tmp/setup_env_bash.yml
       blockinfile:
         path: "/home/{{ username }}/.bashrc"
         block: |
+          # Ensure /usr/local/bin is in PATH
+          'export PATH=$PATH:/usr/local/bin'
 
           # Kubectl completion and alias
           if command -v kubectl &> /dev/null; then
             source <(kubectl completion bash)
-            alias k="kubectl"
+            alias k="sudo kubectl"
             complete -F __start_kubectl k
           fi
 
@@ -244,11 +246,12 @@ cat << EOF > /tmp/setup_env_bash.yml
           alias a="git add ."
           alias s='git commit -m "update"'
           alias d="git push -u origin main"
+          alias k="sudo kubectl"
 
           # Go binaries
-          export PATH=$PATH:/usr/local/go/bin
-          export GOPATH=$HOME/go
-          export PATH=$PATH:$GOPATH/bin
+          'export PATH=$PATH:/usr/local/go/bin'
+          'export GOPATH=$HOME/go'
+          'export PATH=$PATH:$GOPATH/bin'
 
     - name: Ensure .bashrc has correct permissions
       file:
@@ -272,12 +275,12 @@ EOF
 echo "Running Ansible playbook"
 
 # Run the Ansible playbook
-ansible-playbook /tmp/setup_env_bash.yml --ask-become-pass
+ansible-playbook /tmp/setup_env.yml --ask-become-pass
 
 echo "Removing temporary playbook file"
 
 # Remove the temporary playbook file
-rm /tmp/setup_env_bash.yml
+rm /tmp/setup_env.yml
 
 echo "DevOps environment setup complete!"
 echo "Please log out and log back in for the environment variables to take effect."
