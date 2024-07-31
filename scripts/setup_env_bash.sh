@@ -231,7 +231,7 @@ $(cat << 'END_PLAYBOOK'
         path: "/home/{{ username }}/.bashrc"
         block: |
           source <(kubectl completion bash)
-          k="sudo kubectl"  
+          alias k="sudo kubectl"  
           complete -F __start_kubectl k
           source <(kind completion bash)
     
