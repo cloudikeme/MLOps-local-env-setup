@@ -126,6 +126,25 @@ $(cat << 'END_PLAYBOOK'
         name: en_US.UTF-8
         state: present
 
+    - name: Check if Docker is already installed
+      command: which docker
+      register: docker_check
+      ignore_errors: yes
+
+    - name: Remove old Docker GPG key and source list if Docker exists
+      block:
+        - name: Remove old Docker GPG key
+          file:
+            path: /etc/apt/keyrings/docker.asc
+            state: absent
+          when: docker_check.rc == 0
+
+        - name: Remove old Docker source list
+          file:
+            path: /etc/apt/sources.list.d/docker.list
+            state: absent
+          when: docker_check.rc == 0
+
     - name: Add Docker GPG key
       apt_key:
         url: https://download.docker.com/linux/ubuntu/gpg
@@ -143,6 +162,7 @@ $(cat << 'END_PLAYBOOK'
           - docker-ce-cli
           - containerd.io
         state: latest
+        update_cache: yes
 
     - name: Add user to docker group
       user:
