@@ -17,7 +17,6 @@ echo "Creating temporary Ansible playbook file"
 
 # Create a temporary Ansible playbook file
 cat << EOF > /tmp/setup_env_bash.yml
-$(cat << 'END_PLAYBOOK'
 ---
 - name: Set up DevOps environment
   hosts: localhost
@@ -33,7 +32,6 @@ $(cat << 'END_PLAYBOOK'
     go_version: "1.22.5"
     kind_version: "v0.23.0"
     kubectl_version: "v1.30.0"
-    
 
   tasks:
     - name: Update apt cache
@@ -73,7 +71,7 @@ $(cat << 'END_PLAYBOOK'
 
     - name: Add user to sudo group
       user:
-        name: "cloudikeme"
+        name: "{{ username }}"
         groups: sudo
         append: yes
 
@@ -114,17 +112,6 @@ $(cat << 'END_PLAYBOOK'
             name: gh
             state: latest
             update_cache: yes
-            
-
-    - name: Configure bash
-      become_user: "{{ username }}"
-      blockinfile:
-        path: "/home/{{ username }}/.bashrc"
-        block: |
-          source <(kubectl completion bash)
-          k="sudo kubectl"  
-          complete -F __start_kubectl k
-          source <(kind completion bash)
 
     - name: Set bash as default shell
       user:
@@ -175,7 +162,7 @@ $(cat << 'END_PLAYBOOK'
 
     - name: Install kubectl
       get_url:
-        url: https://dl.k8s.io/release/v1.28.0/bin/linux/amd64/kubectl
+        url: "https://dl.k8s.io/release/{{ kubectl_version }}/bin/linux/amd64/kubectl"
         dest: /usr/local/bin/kubectl
         mode: '0755'
 
@@ -204,8 +191,6 @@ $(cat << 'END_PLAYBOOK'
           lineinfile:
             path: "/home/{{ username }}/.bashrc"
             line: 'export PATH="$HOME/miniconda/bin:$PATH"'
-        - name: Initialize conda for bash
-          shell: "$HOME/miniconda/bin/conda init"
 
     - name: Install Go
       block:
@@ -236,22 +221,52 @@ $(cat << 'END_PLAYBOOK'
           lineinfile:
             path: "/home/{{ username }}/.bashrc"
             line: 'export GOPATH=$HOME/go'
-    
-    - name: Add kubectl autocomplete and alias to .bashrc
-      lineinfile:
+
+    - name: Configure bash
+      become_user: "{{ username }}"
+      blockinfile:
         path: "/home/{{ username }}/.bashrc"
-        line: "{{ item }}"
-      loop:
-        - "source <(kubectl completion bash)"
-        - "alias k=sudo kubectl"
-        - "complete -F __start_kubectl k"
+        block: |
+
+          # Kubectl completion and alias
+          if command -v kubectl &> /dev/null; then
+            source <(kubectl completion bash)
+            alias k="kubectl"
+            complete -F __start_kubectl k
+          fi
+
+          # KinD completion
+          if command -v kind &> /dev/null; then
+            source <(kind completion bash)
+          fi
+          
+          # Git aliases
+          alias a="git add ."
+          alias s='git commit -m "update"'
+          alias d="git push -u origin main"
+
+          # Go binaries
+          export PATH=$PATH:/usr/local/go/bin
+          export GOPATH=$HOME/go
+          export PATH=$PATH:$GOPATH/bin
+
+    - name: Ensure .bashrc has correct permissions
+      file:
+        path: "/home/{{ username }}/.bashrc"
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        mode: '0644'
+
+    - name: Source .bashrc
+      become_user: "{{ username }}"
+      shell: source /home/{{ username }}/.bashrc
+      args:
+        executable: /bin/bash
 
     - name: Restart Docker service
       systemd:
         name: docker
         state: restarted
-END_PLAYBOOK
-)
 EOF
 
 echo "Running Ansible playbook"
@@ -265,4 +280,4 @@ echo "Removing temporary playbook file"
 rm /tmp/setup_env_bash.yml
 
 echo "DevOps environment setup complete!"
-echo "Please log out and log back in for the Go environment variables to take effect."
+echo "Please log out and log back in for the environment variables to take effect."
