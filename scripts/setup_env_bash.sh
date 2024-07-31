@@ -116,16 +116,6 @@ $(cat << 'END_PLAYBOOK'
             update_cache: yes
             
 
-    - name: Configure bash
-      become_user: "{{ username }}"
-      blockinfile:
-        path: "/home/{{ username }}/.bashrc"
-        block: |
-          source <(kubectl completion bash)
-          k="sudo kubectl"  
-          complete -F __start_kubectl k
-          source <(kind completion bash)
-
     - name: Set bash as default shell
       user:
         name: "{{ username }}"
@@ -204,8 +194,6 @@ $(cat << 'END_PLAYBOOK'
           lineinfile:
             path: "/home/{{ username }}/.bashrc"
             line: 'export PATH="$HOME/miniconda/bin:$PATH"'
-        - name: Initialize conda for bash
-          shell: "$HOME/miniconda/bin/conda init"
 
     - name: Install Go
       block:
@@ -236,6 +224,16 @@ $(cat << 'END_PLAYBOOK'
           lineinfile:
             path: "/home/{{ username }}/.bashrc"
             line: 'export GOPATH=$HOME/go'
+
+    - name: Configure bash
+      become_user: "{{ username }}"
+      blockinfile:
+        path: "/home/{{ username }}/.bashrc"
+        block: |
+          source <(kubectl completion bash)
+          k="sudo kubectl"  
+          complete -F __start_kubectl k
+          source <(kind completion bash)
     
     - name: Add kubectl autocomplete and alias to .bashrc
       lineinfile:
@@ -243,7 +241,9 @@ $(cat << 'END_PLAYBOOK'
         line: "{{ item }}"
       loop:
         - "source <(kubectl completion bash)"
-        - "alias k=sudo kubectl"
+        - alias a="git add ."
+        - alias s='git commit -m "update"'
+        - alias d="git push -u origin main"
         - "complete -F __start_kubectl k"
 
     - name: Restart Docker service
